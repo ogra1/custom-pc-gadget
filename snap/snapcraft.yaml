@@ -1,0 +1,40 @@
+name: pc-custom
+base: core22
+version: '0.1'
+summary: Demo of a custom PC gadget snap
+description: |
+  This is a custom PC device gadget that re-uses the existing pc gadget for
+  all bootloader binaries as well as the gadget.yaml.
+
+  It allows to very easily add a device API key.
+
+  If you need a different partitioning scheme or change partition sizes, you
+  can remove the gadget.yaml line from the `stage:` block as well as the
+  whole `organize:` block and simply put your own gadget.yaml in place.
+
+grade: stable
+confinement: strict
+
+parts:
+  gadget:
+    source: .
+    plugin: dump
+    stage-snaps:
+      - pc/22/stable
+    stage:
+      - 'grub*'
+      - '*.img'
+      - '*.signed'
+      - 'gadget.yaml'
+    organize:
+      meta.pc/gadget.yaml: gadget.yaml
+
+hooks:
+  prepare-device:
+    environment:
+      # If you are forking and building your own gadget:
+      # define your model's API key here
+      # See https://ubuntu.com/core/services/guide/serial-vault-overview
+      # for instructions on how to generate an API key
+      # DO NOT check this API key into a publicly accessible VCS
+      MODEL_APIKEY: ""
